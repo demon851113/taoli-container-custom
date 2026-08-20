@@ -30,6 +30,14 @@ fi
 
 docker info --format "{{.Swarm.LocalNodeState}}" | grep -q active || docker swarm init   # CUSTOM 可重跑
 
+
+# CUSTOM：抽取與 image 同版本的 Chromium 繁中/簡中語言包（容器非 root 無法 apk add）
+mkdir -p /opt/taoli/locales
+docker pull -q ghcr.io/aliez-ren/taoli-tools-container:latest >/dev/null
+CHROMIUM_VER=$(docker run --rm --entrypoint sh ghcr.io/aliez-ren/taoli-tools-container:latest -c 'apk list -I chromium 2>/dev/null | head -1' | grep -o '[0-9][0-9.]*-r[0-9]*')
+docker run --rm -v /opt/taoli/locales:/out alpine:3.22 sh -c "apk update -q && cd /tmp && (apk fetch -q chromium-lang=$CHROMIUM_VER 2>/dev/null || apk fetch -q chromium-lang) && tar -xzf chromium-lang-*.apk usr/lib/chromium/locales/zh-TW.pak usr/lib/chromium/locales/zh-CN.pak && cp usr/lib/chromium/locales/zh-*.pak /out/"
+chmod 644 /opt/taoli/locales/*.pak
+
 docker pull ghcr.io/aliez-ren/taoli-tools-container:latest
 docker pull ghcr.io/taoli-tools/taoli-tools-signer:latest
 

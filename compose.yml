@@ -12,6 +12,8 @@ services:
       - /opt/taoli/ext:/home/taoli/ext:ro                          # CUSTOM 插件目錄（每個插件一個子資料夾）
       - /opt/taoli/share:/home/taoli/share                         # CUSTOM 一般檔案交換區（雙向可寫）
       - /opt/taoli/index.html:/usr/share/novnc/index.html:ro            # CUSTOM noVNC 壓縮2/品質6（上游 9/0 吃 CPU）
+      - /opt/taoli/locales/zh-TW.pak:/usr/lib/chromium/locales/zh-TW.pak:ro   # CUSTOM 繁中語言包（setup.sh 抽取）
+      - /opt/taoli/locales/zh-CN.pak:/usr/lib/chromium/locales/zh-CN.pak:ro
     networks:
       - public
       - private
