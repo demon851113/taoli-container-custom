@@ -5,7 +5,7 @@ set -eu
 BASE=https://raw.githubusercontent.com/demon851113/taoli-container-custom/main
 mkdir -p /opt/taoli/ext /opt/taoli/share
 cd /opt/taoli
-for f in setup.sh entrypoint.sh compose.yml; do
+for f in setup.sh entrypoint.sh compose.yml index.html; do
   curl -fsSL "$BASE/$f" -o "$f"
 done
 chmod +x setup.sh entrypoint.sh

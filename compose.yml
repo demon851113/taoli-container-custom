@@ -11,6 +11,7 @@ services:
       - /opt/taoli/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro   # CUSTOM 覆蓋啟動腳本
       - /opt/taoli/ext:/home/taoli/ext:ro                          # CUSTOM 插件目錄（每個插件一個子資料夾）
       - /opt/taoli/share:/home/taoli/share                         # CUSTOM 一般檔案交換區（雙向可寫）
+      - /opt/taoli/index.html:/usr/share/novnc/index.html:ro            # CUSTOM noVNC 壓縮2/品質6（上游 9/0 吃 CPU）
     networks:
       - public
       - private

@@ -5,7 +5,7 @@ set -eu
 cd /opt/taoli
 
 # CUSTOM：前置檢查，缺檔就停，不半做
-for f in entrypoint.sh compose.yml; do
+for f in entrypoint.sh compose.yml index.html; do
   [ -f "$f" ] || { echo "缺 /opt/taoli/$f"; exit 1; }
 done
 chmod +x entrypoint.sh

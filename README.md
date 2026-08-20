@@ -37,3 +37,10 @@ curl -fsSL https://raw.githubusercontent.com/demon851113/taoli-container-custom/
 ## 紅線
 
 `keychain.toml`、含 API key 的插件、任何憑證 **絕不 commit**（.gitignore 已擋）。
+
+## 效能調校（2026-08-20，不花錢的部分）
+
+- `index.html` 覆蓋上游 noVNC 頁：`compressionLevel 9→2`、`qualityLevel 0→6`（2 vCPU 上編碼是瓶頸，用頻寬換 CPU）。
+- Chromium 多 `--disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2`。
+- 使用者端：把 noVNC 視窗縮小（遠端桌面會跟著視窗尺寸走，Retina 全螢幕 = 編碼量 3–4 倍）。
+- 主機：2G swap（`/swapfile`）；`/etc/sysctl.conf` ip_forward 必須為 1（騰訊雲鏡像預設 0，見 Obsidian 踩雷）。
