@@ -20,6 +20,7 @@ curl -fsSL https://github.com/aliez-ren/taoli-tools-container/raw/refs/heads/mai
 curl -fsSL https://get.docker.com | sh
 
 # CUSTOM：不再下載上游 compose.yml，用 /opt/taoli/compose.yml
+# CUSTOM：signer image 改 ghcr.io/taoli-tools/（上游 repo 已轉組織，舊路徑 aliez-ren/ 拉取 unauthorized，2026-08-20 實測）
 
 openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -subj /CN=signer -addext 'subjectAltName=DNS:signer,IP:127.0.0.1' -out CERT.pem -keyout KEY.pem
 
@@ -27,10 +28,10 @@ if [ ! -f keychain.toml ]; then
   echo " " > keychain.toml
 fi
 
-docker swarm init
+docker info --format "{{.Swarm.LocalNodeState}}" | grep -q active || docker swarm init   # CUSTOM 可重跑
 
 docker pull ghcr.io/aliez-ren/taoli-tools-container:latest
-docker pull ghcr.io/aliez-ren/taoli-tools-signer:latest
+docker pull ghcr.io/taoli-tools/taoli-tools-signer:latest
 
 docker stack deploy -c compose.yml -d taoli_tools
 

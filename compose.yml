@@ -29,7 +29,7 @@ services:
         order: stop-first
 
   signer:
-    image: ghcr.io/aliez-ren/taoli-tools-signer:latest
+    image: ghcr.io/taoli-tools/taoli-tools-signer:latest
     secrets:
       - KEYCHAIN
       - CERT.pem
