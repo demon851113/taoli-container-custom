@@ -23,7 +23,7 @@ services:
         max_attempts: 0
         window: 0s
       update_config:
-        order: start-first
+        order: stop-first   # CUSTOM 避免兩個 Chromium 同時開同一份 profile
         parallelism: 1
         delay: 5s
       rollback_config:
