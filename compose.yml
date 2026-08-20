@@ -4,6 +4,8 @@ version: "3.9"
 services:
   container:
     image: ghcr.io/aliez-ren/taoli-tools-container:latest
+    environment:
+      - LANG=zh_TW.UTF-8   # CUSTOM Chromium 介面語言（此版忽略 --lang，只認 LANG）
     volumes:
       - data:/home/taoli/data
       - tailscale:/home/taoli/.local/share/tailscale/
