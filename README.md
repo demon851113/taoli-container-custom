@@ -44,3 +44,11 @@ curl -fsSL https://raw.githubusercontent.com/demon851113/taoli-container-custom/
 - Chromium 多 `--disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2`。
 - 使用者端：把 noVNC 視窗縮小（遠端桌面會跟著視窗尺寸走，Retina 全螢幕 = 編碼量 3–4 倍）。
 - 主機：2G swap（`/swapfile`）；`/etc/sysctl.conf` ip_forward 必須為 1（騰訊雲鏡像預設 0，見 Obsidian 踩雷）。
+
+## 裝完之後改東西怎麼生效
+
+`docker stack deploy` 重跑會要 `keychain.toml/KEY.pem`（裝完已刪），**不要用它**。改用：
+
+- 改了 `entrypoint.sh` / `index.html` / 插件（都是 bind mount，檔案換了即見）→ `docker service update --force taoli_tools_container`
+- 要新增掛載 → `docker service update --mount-add type=bind,src=/opt/taoli/X,dst=/容器路徑,ro=true --force taoli_tools_container`
+- 拉最新檔：`cd /opt/taoli && for f in setup.sh entrypoint.sh compose.yml index.html bootstrap.sh; do curl -fsSL https://raw.githubusercontent.com/demon851113/taoli-container-custom/main/$f -o $f; done`（raw CDN 約 5 分鐘快取，急用改成 commit SHA 路徑）
