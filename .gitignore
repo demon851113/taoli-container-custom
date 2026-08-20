@@ -1,0 +1,4 @@
+keychain.toml
+*.pem
+ext/
+share/
