@@ -10,6 +10,9 @@ for f in entrypoint.sh compose.yml index.html; do
 done
 chmod +x entrypoint.sh
 mkdir -p ext share
+
+# CUSTOM：騰訊雲鏡像預設 ip_forward=0，重載 sysctl 或重開機會讓容器斷網
+sed -i "s/^net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" /etc/sysctl.conf 2>/dev/null || true
 chmod 755 ext share
 chmod 777 share   # 容器內使用者 taoli(非root) 也要能寫
 

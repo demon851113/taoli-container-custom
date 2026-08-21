@@ -47,7 +47,7 @@ fi
 
 rm -f $HOME/data/SingletonLock
 chromium --display=$DISPLAY --enable-features=WebContentsForceDark --no-default-browser-check --no-first-run --disable-gpu --use-gl=disabled --disable-dev-shm-usage --start-fullscreen \
-  --disable-web-security --disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2 --lang=zh-TW --accept-lang=zh-TW,zh,en-US \
+  --disable-web-security --disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2 --accept-lang=zh-TW,zh,en-US \
   $EXT_FLAG \
   --user-data-dir=$HOME/data https://taoli.tools &
 BROWSER_PID=$!
