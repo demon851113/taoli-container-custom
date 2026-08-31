@@ -17,7 +17,14 @@ chmod 755 ext share
 chmod 777 share   # 容器內使用者 taoli(非root) 也要能寫
 
 mkdir -p /etc/docker
-echo "{\"seccomp-profile\": \"/etc/docker/seccomp.json\"}" > /etc/docker/daemon.json
+cat > /etc/docker/daemon.json <<'DJ'
+{
+  "seccomp-profile": "/etc/docker/seccomp.json",
+  "default-ulimits": {
+    "nofile": { "Name": "nofile", "Hard": 65535, "Soft": 65535 }
+  }
+}
+DJ
 curl -fsSL https://github.com/aliez-ren/taoli-tools-container/raw/refs/heads/main/seccomp.json > /etc/docker/seccomp.json
 
 curl -fsSL https://get.docker.com | sh

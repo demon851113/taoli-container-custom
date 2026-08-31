@@ -1,6 +1,7 @@
 #!/bin/sh
-# 自訂 entrypoint：以 bind mount 覆蓋 image 內 /usr/local/bin/entrypoint.sh
-# 與上游差異：(1) chromium 加 --disable-web-security  (2) 自動載入 /home/taoli/ext/* 底下的未打包插件
+# 自訂 entrypoint（基底 = 上游 main 2026-08-26 94b35bc）。與上游差異：
+# (1) 掃 /home/taoli/ext/* 側載插件  (2) chromium 加省力參數與 accept-lang
+# （--disable-web-security 上游已內建；介面語言由 compose 的 LANG=zh_TW.UTF-8 決定）
 set -eu
 
 VNC_PID=""
@@ -9,6 +10,8 @@ OPENBOX_PID=""
 BROWSER_PID=""
 TAILSCALED_PID=""
 TAILSCALE_PID=""
+
+CHROMIUM_NOFILE_LIMIT="${CHROMIUM_NOFILE_LIMIT:-65535}"
 
 cleanup() {
   for pid in "$VNC_PID" "$WEBSOCKIFY_PID" "$OPENBOX_PID" "$BROWSER_PID" "$TAILSCALED_PID" "$TAILSCALE_PID"; do
@@ -30,7 +33,7 @@ WEBSOCKIFY_PID=$!
 openbox-session &
 OPENBOX_PID=$!
 
-# 掃 /home/taoli/ext 底下每個含 manifest.json 的資料夾，組成 --load-extension=a,b,c
+# CUSTOM：掃插件目錄
 EXT_FLAG=""
 EXT_LIST=""
 for d in $HOME/ext/*/; do
@@ -46,10 +49,22 @@ else
 fi
 
 rm -f $HOME/data/SingletonLock
-chromium --display=$DISPLAY --enable-features=WebContentsForceDark --no-default-browser-check --no-first-run --disable-gpu --use-gl=disabled --disable-dev-shm-usage --start-fullscreen \
-  --disable-web-security --disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2 --accept-lang=zh-TW,zh,en-US \
-  $EXT_FLAG \
-  --user-data-dir=$HOME/data https://taoli.tools &
+
+case "$CHROMIUM_NOFILE_LIMIT" in
+  ''|*[!0-9]*)
+    echo "CHROMIUM_NOFILE_LIMIT must be a positive integer" >&2
+    exit 1
+    ;;
+esac
+
+NOFILE_HARD_LIMIT="$(ulimit -Hn)"
+if [ "$NOFILE_HARD_LIMIT" != "unlimited" ] && [ "$CHROMIUM_NOFILE_LIMIT" -gt "$NOFILE_HARD_LIMIT" ]; then
+  CHROMIUM_NOFILE_LIMIT="$NOFILE_HARD_LIMIT"
+fi
+ulimit -Sn "$CHROMIUM_NOFILE_LIMIT"
+echo "Starting Chromium with a nofile soft limit of $(ulimit -Sn)"
+
+chromium --display=$DISPLAY --enable-features=WebContentsForceDark --no-default-browser-check --no-first-run --disable-gpu --use-gl=disabled --disable-dev-shm-usage --disable-web-security --disable-smooth-scrolling --animation-duration-scale=0 --renderer-process-limit=2 --accept-lang=zh-TW,zh,en-US $EXT_FLAG --start-fullscreen --user-data-dir=$HOME/data https://taoli.tools &
 BROWSER_PID=$!
 
 tailscaled --tun=userspace-networking --socket=$HOME/tailscale.socket &
