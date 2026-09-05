@@ -1,7 +1,7 @@
 ---
 desc: taoli.tools 官方容器的自訂一鍵安裝（Chromium 加 --disable-web-security + 側載插件目錄）
 kind: 自動化
-status: 開發中
+status: 維護中（只跟上游同步；2026-09-06 依實況更正，原「開發中」）
 stack: sh / docker swarm（沿用上游 image，不自建）
 run: 全新 Linux VPS 以 root 執行 `curl -fsSL https://raw.githubusercontent.com/demon851113/taoli-container-custom/main/bootstrap.sh | sh`
 risk: 碰真錢（signer 容器持有助記詞；keychain.toml 絕不進 repo）
